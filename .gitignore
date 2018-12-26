@@ -1,0 +1,17 @@
+*.ipr
+*.iws
+*.class
+*.log
+*/*.log
+.idea/
+*.iml
+dependency-reduced-pom.xml
+*/target/**
+.Rhistory
+*.log
+*.DS_Store
+*.zip
+*/files/**
+*/out/**
+*/out/artifacts/rasl_reports_jar/*
+*/META-INF/**

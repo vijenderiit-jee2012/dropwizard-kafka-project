@@ -1,0 +1,10 @@
+{
+    "namespace" : "com.flipkart.kafka",
+    "type": "record",
+    "name": "FinalAccount",
+    "fields": [
+        {"name": "id", "type": "int"},
+        {"name": "amount", "type": "double"},
+        {"name": "timestamp", "type": "long"}
+    ]
+}

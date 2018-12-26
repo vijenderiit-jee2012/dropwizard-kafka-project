@@ -1,0 +1,12 @@
+{
+    "namespace" : "com.flipkart.kafka",
+    "type": "record",
+    "name": "Payment",
+    "fields": [
+        {"name": "id", "type": "string"},
+        {"name": "name", "type": "string","default": ""},
+        {"name": "amount", "type": "double", "default": 0},
+        {"name": "profile", "type": "string", "default": "developer"},
+        {"name": "salary", "type": "int", "default": 100}
+    ]
+}
