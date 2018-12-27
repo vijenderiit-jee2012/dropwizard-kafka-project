@@ -32,9 +32,11 @@ public class KafkaStream  {
         stream_properties.put(StreamsConfig.CLIENT_ID_CONFIG, application_id);
         stream_properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         stream_properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
         stream_properties.put(StreamsConfig.STATE_DIR_CONFIG, "/tmp/kafka-streams");
         stream_properties.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
         stream_properties.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
+
 
         StreamsBuilder streamsBuilder = new StreamsBuilder();
         return streamsBuilder;

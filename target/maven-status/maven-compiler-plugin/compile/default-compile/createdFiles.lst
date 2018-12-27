@@ -9,7 +9,9 @@ com/flipkart/kafka/Kafka.class
 com/flipkart/kafka/BankBalance.class
 com/flipkart/Main.class
 com/flipkart/kafka/FinalAccount$1.class
+com/flipkart/kafka/BankTransactionsProducer.class
 com/flipkart/kafka/KafkaStream.class
 com/flipkart/kafka/KafkaStream$1.class
 com/flipkart/kafka/BankAccount.class
+com/flipkart/kafka/BankBalanceExactlyOnceApp.class
 com/flipkart/kafka/Payment$1.class

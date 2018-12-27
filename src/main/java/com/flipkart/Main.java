@@ -1,6 +1,7 @@
 package com.flipkart;
 
 import com.flipkart.kafka.*;
+import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -18,6 +19,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Timer;
 
 public class Main {
@@ -68,16 +70,12 @@ public class Main {
     public static void main(String[] args){
         //kafka_producer_consumer();
         //FavouriteColor favouriteColor = new FavouriteColor();
-        read_from_rock_db();
-        //BankBalance bankBalance = new BankBalance();
+
+        //read_from_rock_db();
+        BankBalance bankBalance = new BankBalance();
         //bankBalance.produce_records();
         //bankBalance.consume_record();
-//        try{
-//            Thread.sleep(100L);
-//        }catch(InterruptedException e){System.out.println(e);}
-     //   bankBalance.start_transaction();
-        //bankBalance.getRockDBData(bankBalance.streams).stream().peek(key -> System.out.println(key));
-
+        bankBalance.start_transaction();
     }
 
 

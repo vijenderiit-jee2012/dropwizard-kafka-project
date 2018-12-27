@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -22,6 +23,7 @@ import org.apache.kafka.streams.state.*;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import static java.lang.Thread.sleep;
@@ -35,6 +37,7 @@ public class BankBalance extends KafkaStream{
     final Map<String, String> serdeConfig;
     final SpecificAvroSerializer<BankAccount> bankEventSerializer;
     final SpecificAvroDeserializer<BankAccount> bankEventDeserializer;
+    final SpecificAvroDeserializer<FinalAccount> AccountEventDeserializer;
     final SpecificAvroSerde<BankAccount> specificBankAvroSerde;
     final SpecificAvroSerde<FinalAccount> specificAccountAvroSerde;
     Random random;
@@ -54,6 +57,8 @@ public class BankBalance extends KafkaStream{
         bankEventSerializer.configure(serdeConfig, false); // false for Value
         bankEventDeserializer = new SpecificAvroDeserializer();
         bankEventDeserializer.configure(serdeConfig, false);
+        AccountEventDeserializer  = new SpecificAvroDeserializer();
+        AccountEventDeserializer.configure(serdeConfig, false);
 
         specificBankAvroSerde = new SpecificAvroSerde();
         specificBankAvroSerde.configure(serdeConfig, false);     // false for Value
@@ -74,22 +79,23 @@ public class BankBalance extends KafkaStream{
         consumer_props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         consumer_props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-        final KafkaConsumer<String, BankAccount> bankConsumer = new KafkaConsumer(consumer_props, Serdes.String().deserializer(), bankEventDeserializer);
+        final KafkaConsumer<String, FinalAccount> bankConsumer = new KafkaConsumer(consumer_props, Serdes.String().deserializer(), AccountEventDeserializer);
 
         Collection ar = new ArrayList();
+        // "bank-application-KSTREAM-AGGREGATE-STATE-STORE-0000000003-changelog"
         TopicPartition tp_1 = new TopicPartition(input_topic, 0);
         TopicPartition tp_2 = new TopicPartition(input_topic, 1);
         ar.add(tp_1);
         ar.add(tp_2);
         bankConsumer.assign(ar);
-        //bankConsumer.seekToBeginning(ar);
+        bankConsumer.seekToBeginning(ar);
 
         while (true) {
             System.out.println("FETCHING RECORD FROM KAFKA");
-            ConsumerRecords<String, BankAccount> records = bankConsumer.poll(1000L);
-            if (records.isEmpty() == true) break;
+            ConsumerRecords<String, FinalAccount> records = bankConsumer.poll(1000L);
             System.out.println(records.isEmpty());
-            for (ConsumerRecord<String, BankAccount> record : records) {
+            if (records.isEmpty() == true) break;
+            for (ConsumerRecord<String, FinalAccount> record : records) {
                 String key = record.key();
                 System.out.println("  key => "+ key + "  value => " + record.value().toString() +"  topic =>  "+record.topic() + "    partition  =>  "+record.partition());
             }
@@ -103,8 +109,6 @@ public class BankBalance extends KafkaStream{
 
     public void produce_records(){
         producer_props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        producer_props.put(ProducerConfig.ACKS_CONFIG, "all");
-
 
         final KafkaProducer<String, BankAccount> bankProducer = new KafkaProducer(producer_props, Serdes.String().serializer(), bankEventSerializer);
 
@@ -112,31 +116,29 @@ public class BankBalance extends KafkaStream{
         final Pattern pattern = Pattern.compile(",", Pattern.UNICODE_CHARACTER_CLASS);
         BankAccount bankAccount;
         int i = 0;
-        String[] names = {"Vijender", "Bhavesh", "Aditya"};
+        String[] names = {"Vijender", "Bhavesh", "Aditya", "Amit", "Smit", "Rachit"};
         while (true){
-            //System.out.println("Please Enter Customer Details :  ");
-            //String[] transaction = pattern.split(sc.nextLine().trim());
-            //if (transaction[0].equals("false")){
-            //    bankProducer.close();
-            //    break;
-            //}
-
-            //int customer_id = Integer.parseInt(transaction[0]);
-            //String customer_name = transaction[1];
-            double customer_salary = random.nextInt(10000000) + 5;
-            long timestamp = random.nextInt(1000000000) + 1000000000;
+            double customer_salary = random.nextInt(100000) + 1000;
+            long timestamp = random.nextInt(100000) + 1000;
             int partition = random.nextInt(5) % 2;
             int id = random.nextInt(10) % names.length;
 
             bankAccount = new BankAccount(id + 1, names[id], customer_salary, timestamp);
 
-            bankProducer.send(new ProducerRecord<String, BankAccount>(input_topic, partition, String.valueOf(id + 1), bankAccount));
-             i += 1;
-            if (i % 1000 == 0)
-                System.out.println("Customer Salary Published");
-             if (i == 1000000)
-                 break;
-
+            try{
+                RecordMetadata recordMetadata = bankProducer.send(new ProducerRecord<String, BankAccount>(input_topic, partition, String.valueOf(id + 1), bankAccount)).get();
+            }
+            catch (InterruptedException e){
+                System.out.println(e.getMessage());
+            }
+            catch (ExecutionException e){
+                System.out.println(e.getMessage());
+            }
+            i += 1;
+            if (i == 1000) {
+                System.out.println("All Customer Salary Published");
+                break;
+            }
         }
     }
 
@@ -148,13 +150,13 @@ public class BankBalance extends KafkaStream{
 
         System.out.println("STARTING THE STREAM");
         bank_stream.peek((key, value) -> System.out.println(key + "     " + value.toString()));
+        System.out.println("\n\n");
 
         // Use groupBy , instead of groupByKey to avoid creation of internal topic;
         final KTable<String, FinalAccount> account_table = bank_stream.
                 groupBy((key, value) -> key, Grouped.with(Serdes.String(), specificBankAvroSerde)).
                 aggregate(
                         () -> {
-                            System.out.println("I AM HERE");
                             return new FinalAccount(0, 0.0, 0L);
                         },
                         (key, bankAccount, finalAccount) -> {
@@ -169,24 +171,13 @@ public class BankBalance extends KafkaStream{
                         Materialized.<String, FinalAccount, KeyValueStore<Bytes, byte[]>>as(ACCOUNT_STORE).with(Serdes.String(), specificAccountAvroSerde)
                 );
 
-        account_table.toStream().peek((key, value) -> System.out.println(key + " FUCK " + value.toString()));
+        account_table.toStream().peek((key, value) -> System.out.println(key + " CHANGE " + value.toString()));
 
         //account_table.toStream().to(output_topic);
         streams = new KafkaStreams(streamsBuilder.build(), stream_properties);
 
         streams.start();
 
-        //streams.allMetadataForStore(ACCOUNT_STORE);
         Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
-
-
-         // ReadOnlyKeyValueStore<String, FinalAccount> keyValueStore =
-//                streams.store(ACCOUNT_STORE, QueryableStoreTypes.<String, FinalAccount>keyValueStore());
-//
-//        KeyValueIterator<String, FinalAccount> range = keyValueStore.range("all", "streams");
-//        while (range.hasNext()) {
-//            KeyValue<String, FinalAccount> next = range.next();
-//            System.out.println("count for " + next.key + ": " + next.value.toString());
-//        }
     }
 }
