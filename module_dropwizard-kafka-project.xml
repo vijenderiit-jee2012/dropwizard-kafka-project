@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_dropwizard-kafka-project" default="compile.module.dropwizard-kafka-project">
+  <dirname property="module.dropwizard-kafka-project.basedir" file="${ant.file.module_dropwizard-kafka-project}"/>
+  
+  <property name="module.jdk.home.dropwizard-kafka-project" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.dropwizard-kafka-project" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.dropwizard-kafka-project" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.dropwizard-kafka-project" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="dropwizard-kafka-project.output.dir" value="${module.dropwizard-kafka-project.basedir}/target/classes"/>
+  <property name="dropwizard-kafka-project.testoutput.dir" value="${module.dropwizard-kafka-project.basedir}/target/test-classes"/>
+  
+  <path id="dropwizard-kafka-project.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="dropwizard-kafka-project.module.production.classpath">
+    <path refid="${module.jdk.classpath.dropwizard-kafka-project}"/>
+    <path refid="library.maven:_org.apache.kafka:kafka-streams:2.1.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:kafka-clients:2.1.0.classpath"/>
+    <path refid="library.maven:_com.github.luben:zstd-jni:1.3.5-4.classpath"/>
+    <path refid="library.maven:_org.lz4:lz4-java:1.5.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:connect-json:2.1.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:connect-api:2.1.0.classpath"/>
+    <path refid="library.maven:_javax.ws.rs:javax.ws.rs-api:2.1.1.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.25.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_org.apache.storm:storm-core:1.2.2.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:kryo:3.0.3.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:reflectasm:1.10.1.classpath"/>
+    <path refid="library.maven:_org.ow2.asm:asm:5.0.3.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:minlog:1.3.0.classpath"/>
+    <path refid="library.maven:_org.objenesis:objenesis:2.1.classpath"/>
+    <path refid="library.maven:_org.clojure:clojure:1.7.0.classpath"/>
+    <path refid="library.maven:_ring-cors:ring-cors:0.1.5.classpath"/>
+    <path refid="library.maven:_com.lmax:disruptor:3.3.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-api:2.8.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-core:2.8.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-slf4j-impl:2.8.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:log4j-over-slf4j:1.6.6.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-core:3.1.0.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-graphite:3.1.0.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-ganglia:3.1.0.classpath"/>
+    <path refid="library.maven:_info.ganglia.gmetric4j:gmetric4j:1.0.7.classpath"/>
+    <path refid="library.maven:_javax.servlet:servlet-api:2.5.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-avro-serializer:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-schema-registry-client:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:common-config:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:common-utils:5.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.zookeeper:zookeeper:3.4.13.classpath"/>
+    <path refid="library.maven:_jline:jline:0.9.94.classpath"/>
+    <path refid="library.maven:_org.apache.yetus:audience-annotations:0.5.0.classpath"/>
+    <path refid="library.maven:_io.netty:netty:3.10.6.final.classpath"/>
+    <path refid="library.maven:_com.101tec:zkclient:0.10.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-streams-avro-serde:5.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.avro:avro:1.8.2.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-core-asl:1.9.13.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-mapper-asl:1.9.13.classpath"/>
+    <path refid="library.maven:_com.thoughtworks.paranamer:paranamer:2.7.classpath"/>
+    <path refid="library.maven:_org.xerial.snappy:snappy-java:1.1.1.3.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-compress:1.8.1.classpath"/>
+    <path refid="library.maven:_org.tukaani:xz:1.5.classpath"/>
+    <path refid="library.maven:_org.rocksdb:rocksdbjni:5.5.1.classpath"/>
+  </path>
+  
+  <path id="dropwizard-kafka-project.runtime.production.module.classpath">
+    <pathelement location="${dropwizard-kafka-project.output.dir}"/>
+    <path refid="library.maven:_org.apache.kafka:kafka-streams:2.1.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:kafka-clients:2.1.0.classpath"/>
+    <path refid="library.maven:_com.github.luben:zstd-jni:1.3.5-4.classpath"/>
+    <path refid="library.maven:_org.lz4:lz4-java:1.5.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:connect-json:2.1.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:connect-api:2.1.0.classpath"/>
+    <path refid="library.maven:_javax.ws.rs:javax.ws.rs-api:2.1.1.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.25.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_org.apache.storm:storm-core:1.2.2.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:kryo:3.0.3.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:reflectasm:1.10.1.classpath"/>
+    <path refid="library.maven:_org.ow2.asm:asm:5.0.3.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:minlog:1.3.0.classpath"/>
+    <path refid="library.maven:_org.objenesis:objenesis:2.1.classpath"/>
+    <path refid="library.maven:_org.clojure:clojure:1.7.0.classpath"/>
+    <path refid="library.maven:_ring-cors:ring-cors:0.1.5.classpath"/>
+    <path refid="library.maven:_com.lmax:disruptor:3.3.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-api:2.8.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-core:2.8.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-slf4j-impl:2.8.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:log4j-over-slf4j:1.6.6.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-core:3.1.0.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-graphite:3.1.0.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-ganglia:3.1.0.classpath"/>
+    <path refid="library.maven:_info.ganglia.gmetric4j:gmetric4j:1.0.7.classpath"/>
+    <path refid="library.maven:_javax.servlet:servlet-api:2.5.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-avro-serializer:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-schema-registry-client:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:common-config:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:common-utils:5.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.zookeeper:zookeeper:3.4.13.classpath"/>
+    <path refid="library.maven:_jline:jline:0.9.94.classpath"/>
+    <path refid="library.maven:_org.apache.yetus:audience-annotations:0.5.0.classpath"/>
+    <path refid="library.maven:_io.netty:netty:3.10.6.final.classpath"/>
+    <path refid="library.maven:_com.101tec:zkclient:0.10.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-streams-avro-serde:5.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.avro:avro:1.8.2.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-core-asl:1.9.13.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-mapper-asl:1.9.13.classpath"/>
+    <path refid="library.maven:_com.thoughtworks.paranamer:paranamer:2.7.classpath"/>
+    <path refid="library.maven:_org.xerial.snappy:snappy-java:1.1.1.3.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-compress:1.8.1.classpath"/>
+    <path refid="library.maven:_org.tukaani:xz:1.5.classpath"/>
+    <path refid="library.maven:_org.rocksdb:rocksdbjni:5.5.1.classpath"/>
+  </path>
+  
+  <path id="dropwizard-kafka-project.module.classpath">
+    <path refid="${module.jdk.classpath.dropwizard-kafka-project}"/>
+    <pathelement location="${dropwizard-kafka-project.output.dir}"/>
+    <path refid="library.maven:_org.apache.kafka:kafka-streams:2.1.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:kafka-clients:2.1.0.classpath"/>
+    <path refid="library.maven:_com.github.luben:zstd-jni:1.3.5-4.classpath"/>
+    <path refid="library.maven:_org.lz4:lz4-java:1.5.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:connect-json:2.1.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:connect-api:2.1.0.classpath"/>
+    <path refid="library.maven:_javax.ws.rs:javax.ws.rs-api:2.1.1.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.25.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_org.apache.storm:storm-core:1.2.2.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:kryo:3.0.3.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:reflectasm:1.10.1.classpath"/>
+    <path refid="library.maven:_org.ow2.asm:asm:5.0.3.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:minlog:1.3.0.classpath"/>
+    <path refid="library.maven:_org.objenesis:objenesis:2.1.classpath"/>
+    <path refid="library.maven:_org.clojure:clojure:1.7.0.classpath"/>
+    <path refid="library.maven:_ring-cors:ring-cors:0.1.5.classpath"/>
+    <path refid="library.maven:_com.lmax:disruptor:3.3.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-api:2.8.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-core:2.8.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-slf4j-impl:2.8.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:log4j-over-slf4j:1.6.6.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-core:3.1.0.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-graphite:3.1.0.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-ganglia:3.1.0.classpath"/>
+    <path refid="library.maven:_info.ganglia.gmetric4j:gmetric4j:1.0.7.classpath"/>
+    <path refid="library.maven:_javax.servlet:servlet-api:2.5.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-avro-serializer:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-schema-registry-client:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:common-config:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:common-utils:5.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.zookeeper:zookeeper:3.4.13.classpath"/>
+    <path refid="library.maven:_jline:jline:0.9.94.classpath"/>
+    <path refid="library.maven:_org.apache.yetus:audience-annotations:0.5.0.classpath"/>
+    <path refid="library.maven:_io.netty:netty:3.10.6.final.classpath"/>
+    <path refid="library.maven:_com.101tec:zkclient:0.10.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-streams-avro-serde:5.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.avro:avro:1.8.2.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-core-asl:1.9.13.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-mapper-asl:1.9.13.classpath"/>
+    <path refid="library.maven:_com.thoughtworks.paranamer:paranamer:2.7.classpath"/>
+    <path refid="library.maven:_org.xerial.snappy:snappy-java:1.1.1.3.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-compress:1.8.1.classpath"/>
+    <path refid="library.maven:_org.tukaani:xz:1.5.classpath"/>
+    <path refid="library.maven:_org.rocksdb:rocksdbjni:5.5.1.classpath"/>
+  </path>
+  
+  <path id="dropwizard-kafka-project.runtime.module.classpath">
+    <pathelement location="${dropwizard-kafka-project.testoutput.dir}"/>
+    <pathelement location="${dropwizard-kafka-project.output.dir}"/>
+    <path refid="library.maven:_org.apache.kafka:kafka-streams:2.1.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:kafka-clients:2.1.0.classpath"/>
+    <path refid="library.maven:_com.github.luben:zstd-jni:1.3.5-4.classpath"/>
+    <path refid="library.maven:_org.lz4:lz4-java:1.5.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:connect-json:2.1.0.classpath"/>
+    <path refid="library.maven:_org.apache.kafka:connect-api:2.1.0.classpath"/>
+    <path refid="library.maven:_javax.ws.rs:javax.ws.rs-api:2.1.1.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.25.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_org.apache.storm:storm-core:1.2.2.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:kryo:3.0.3.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:reflectasm:1.10.1.classpath"/>
+    <path refid="library.maven:_org.ow2.asm:asm:5.0.3.classpath"/>
+    <path refid="library.maven:_com.esotericsoftware:minlog:1.3.0.classpath"/>
+    <path refid="library.maven:_org.objenesis:objenesis:2.1.classpath"/>
+    <path refid="library.maven:_org.clojure:clojure:1.7.0.classpath"/>
+    <path refid="library.maven:_ring-cors:ring-cors:0.1.5.classpath"/>
+    <path refid="library.maven:_com.lmax:disruptor:3.3.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-api:2.8.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-core:2.8.2.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-slf4j-impl:2.8.2.classpath"/>
+    <path refid="library.maven:_org.slf4j:log4j-over-slf4j:1.6.6.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-core:3.1.0.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-graphite:3.1.0.classpath"/>
+    <path refid="library.maven:_io.dropwizard.metrics:metrics-ganglia:3.1.0.classpath"/>
+    <path refid="library.maven:_info.ganglia.gmetric4j:gmetric4j:1.0.7.classpath"/>
+    <path refid="library.maven:_javax.servlet:servlet-api:2.5.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-avro-serializer:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-schema-registry-client:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:common-config:5.0.1.classpath"/>
+    <path refid="library.maven:_io.confluent:common-utils:5.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.zookeeper:zookeeper:3.4.13.classpath"/>
+    <path refid="library.maven:_jline:jline:0.9.94.classpath"/>
+    <path refid="library.maven:_org.apache.yetus:audience-annotations:0.5.0.classpath"/>
+    <path refid="library.maven:_io.netty:netty:3.10.6.final.classpath"/>
+    <path refid="library.maven:_com.101tec:zkclient:0.10.classpath"/>
+    <path refid="library.maven:_io.confluent:kafka-streams-avro-serde:5.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.avro:avro:1.8.2.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-core-asl:1.9.13.classpath"/>
+    <path refid="library.maven:_org.codehaus.jackson:jackson-mapper-asl:1.9.13.classpath"/>
+    <path refid="library.maven:_com.thoughtworks.paranamer:paranamer:2.7.classpath"/>
+    <path refid="library.maven:_org.xerial.snappy:snappy-java:1.1.1.3.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-compress:1.8.1.classpath"/>
+    <path refid="library.maven:_org.tukaani:xz:1.5.classpath"/>
+    <path refid="library.maven:_org.rocksdb:rocksdbjni:5.5.1.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.dropwizard-kafka-project">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.dropwizard-kafka-project">
+    <patternset refid="excluded.from.module.dropwizard-kafka-project"/>
+  </patternset>
+  
+  <path id="dropwizard-kafka-project.module.test.sourcepath">
+    <dirset dir="${module.dropwizard-kafka-project.basedir}">
+      <include name="src/test/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.dropwizard-kafka-project" depends="compile.module.dropwizard-kafka-project.production,compile.module.dropwizard-kafka-project.tests" description="Compile module dropwizard-kafka-project"/>
+  
+  <target name="compile.module.dropwizard-kafka-project.production" depends="register.custom.compilers" description="Compile module dropwizard-kafka-project; production classes"/>
+  
+  <target name="compile.module.dropwizard-kafka-project.tests" depends="register.custom.compilers,compile.module.dropwizard-kafka-project.production" description="compile module dropwizard-kafka-project; test classes" unless="skip.tests">
+    <mkdir dir="${dropwizard-kafka-project.testoutput.dir}"/>
+    <javac2 destdir="${dropwizard-kafka-project.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.dropwizard-kafka-project}/javac">
+      <compilerarg line="${compiler.args.dropwizard-kafka-project}"/>
+      <bootclasspath refid="dropwizard-kafka-project.module.bootclasspath"/>
+      <classpath refid="dropwizard-kafka-project.module.classpath"/>
+      <src refid="dropwizard-kafka-project.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.dropwizard-kafka-project"/>
+    </javac2>
+    
+    <copy todir="${dropwizard-kafka-project.testoutput.dir}">
+      <fileset dir="${module.dropwizard-kafka-project.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.dropwizard-kafka-project" description="cleanup module">
+    <delete dir="${dropwizard-kafka-project.output.dir}"/>
+    <delete dir="${dropwizard-kafka-project.testoutput.dir}"/>
+  </target>
+</project>

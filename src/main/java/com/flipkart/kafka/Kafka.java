@@ -28,6 +28,13 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 public class Kafka {
     private Properties producer_props;
     private Properties consumer_props;
+    private String[] sentences = {
+            "I am the BeSt",
+            "i Support CSK",
+            "We are happy if csk wins",
+            "Ashwin and Dhoni are good captains",
+            "Watson and Ponting are legends"
+    };
 
     public Kafka(){
         producer_props = new Properties();
@@ -40,17 +47,19 @@ public class Kafka {
         producer_props.put(ProducerConfig.ACKS_CONFIG, "all");
         producer_props.put(ProducerConfig.RETRIES_CONFIG, 0);
         producer_props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        producer_props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-        producer_props.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:5001");
+        //producer_props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+        producer_props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        //producer_props.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:5001");
 
         return new KafkaProducer(producer_props);
     }
 
     public void insert_word_into_kafka(KafkaProducer producer, String topic){
-        Scanner sc = new Scanner(System.in);
-        String line;
-        for (int i = 0;  i < 1; i++){
-            line = sc.nextLine();
+
+        for (int i = 0;  i < 200; i++){
+            Random random = new Random();
+            int index = Math.abs(random.nextInt()) % this.sentences.length;
+            String line = sentences[index];
             final ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, i+"", line);
             try{
                 RecordMetadata metadata = (RecordMetadata) producer.send(record).get();
@@ -96,7 +105,8 @@ public class Kafka {
         consumer_props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumer_props.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:5001");
         consumer_props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        consumer_props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+        //consumer_props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+        consumer_props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumer_props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
 
         return new KafkaConsumer(consumer_props);
@@ -116,12 +126,15 @@ public class Kafka {
 
         while (true) {
             System.out.println("FETCHING RECORD FROM KAFKA");
-            ConsumerRecords<String, Payment> records = consumer.poll(1000L);
+            //ConsumerRecords<String, Payment> records = consumer.poll(1000L);
+            ConsumerRecords<String, String> records = consumer.poll(1000L);
             System.out.println(records.isEmpty());
-            for (ConsumerRecord<String, Payment> record : records) {
-                String key = record.key();
-                System.out.println("  key => "+ key + "  value => " + record.value() +"  topic =>  "+record.topic() + "    partition  =>  "+record.partition());
-            }
+//            for (ConsumerRecord<String, Payment> record : records) {
+//                String key = record.key();
+//                System.out.println("  key => "+ key + "  value => " + record.value() +"  topic =>  "+record.topic() + "    partition  =>  "+record.partition());
+//            }
+            for (ConsumerRecord<String, String> record : records)
+                System.out.println(record.key() + " : " + record.value());
             consumer.commitSync();
             break;
         }
