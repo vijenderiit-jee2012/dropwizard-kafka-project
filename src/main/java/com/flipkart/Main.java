@@ -4,12 +4,16 @@ import com.flipkart.kafka.*;
 import com.flipkart.storm.bolts.SplitSentenceBolt;
 import com.flipkart.storm.bolts.WordCountBolt;
 import com.flipkart.storm.spouts.SentenceSpout;
+import com.flipkart.storm.trident.Split;
 import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.state.StreamsMetadata;
 import org.apache.log4j.Logger;
+import org.apache.storm.kafka.spout.trident.KafkaTridentSpoutOpaque;
+import org.apache.storm.trident.Stream;
+import org.apache.storm.kafka.spout.trident.KafkaTridentSpoutTransactional;
 
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -22,6 +26,8 @@ import org.apache.storm.kafka.spout.KafkaSpout;
 import org.apache.storm.kafka.spout.KafkaSpoutConfig;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.transactional.TransactionalTopologyBuilder;
+import org.apache.storm.trident.TridentTopology;
+import org.apache.storm.trident.state.map.OpaqueMap;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.spout.SchemeAsMultiScheme;
 import org.apache.storm.tuple.Values;
@@ -106,27 +112,35 @@ public class Main {
 
         /* NATIVE STORM WITH KAFKA SPOUT */
 
-        Fields fields = new Fields("topic", "offset", "key", "message", "partition");
-        TopologyBuilder topologyBuilder = new TopologyBuilder();
-
+//        Fields fields = new Fields("topic", "offset", "key", "message", "partition");
+//        TopologyBuilder topologyBuilder = new TopologyBuilder();
+//
         KafkaSpoutConfig kafkaSpoutConfig = KafkaSpoutConfig.builder("localhost:9092", TOPIC)
                 .setGroupId("wordcount-application")
                 .setTupleTrackingEnforced(true)
-                .setOffsetCommitPeriodMs(100_000)
+                .setOffsetCommitPeriodMs(10_000)
                 .setFirstPollOffsetStrategy(KafkaSpoutConfig.FirstPollOffsetStrategy.EARLIEST)
                 .setRecordTranslator((r) -> new Values(r.topic(),  r.offset(), r.key(), r.value(), r.partition()), new Fields("topic", "offset", "key", "message", "partition"))
                 .build();
-
-        topologyBuilder.setSpout("sentence-spout", new KafkaSpout(kafkaSpoutConfig), 3);
-        topologyBuilder.setBolt("split-bolt", splitBolt, 4).shuffleGrouping("sentence-spout");
-        topologyBuilder.setBolt("count-bolt", wordCountBolt, 4).fieldsGrouping("split-bolt", new Fields("message"));
-
+//
+//        topologyBuilder.setSpout("sentence-spout", new KafkaSpout(kafkaSpoutConfig), 3);
+//        topologyBuilder.setBolt("split-bolt", splitBolt, 4).shuffleGrouping("sentence-spout");
+//        topologyBuilder.setBolt("count-bolt", wordCountBolt, 4).fieldsGrouping("split-bolt", new Fields("message"));
+//
         Config config = new Config();
         config.setNumWorkers(3);
         config.setDebug(true);
-        StormSubmitter.submitTopology("WordCountTopology", config, topologyBuilder.createTopology());
+//        StormSubmitter.submitTopology("WordCountTopology", config, topologyBuilder.createTopology());
 
         /* TRIDENT TOPOLOGY */
+        TridentTopology tridentTopology = new TridentTopology();
+        KafkaTridentSpoutOpaque kafkaTridentSpoutOpaque = new KafkaTridentSpoutOpaque(kafkaSpoutConfig);
+        Stream stream = tridentTopology
+                .newStream("sentence-spout", kafkaTridentSpoutOpaque)
+                .each(new Fields("message"), new Split(), new Fields("word")).parallelismHint(3);
+
+        StormSubmitter.submitTopology("kafkaTridentTest", config, tridentTopology.build());
+
 
     }
 }
